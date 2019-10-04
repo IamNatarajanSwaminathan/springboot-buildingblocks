@@ -3,6 +3,8 @@ package com.stacksimplify.restservices.controller;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.stacksimplify.restservices.entities.User;
 import com.stacksimplify.restservices.exceptions.UserExistsException;
+import com.stacksimplify.restservices.exceptions.UserNameNotFoundException;
 import com.stacksimplify.restservices.exceptions.UserNotFoundException;
 import com.stacksimplify.restservices.services.UserService;
 
@@ -45,7 +48,7 @@ public class UserController {
 	 */
 	
 	@PostMapping("/createUser")
-	public ResponseEntity<Void> createUser(@RequestBody User user, UriComponentsBuilder builder) {
+	public ResponseEntity<Void> createUser(@Valid @RequestBody User user, UriComponentsBuilder builder) {
 		try {
 			userService.createUser(user);
 			
@@ -88,8 +91,17 @@ public class UserController {
 	}
 	
 	@GetMapping("/getUsernameByUsername/{userName}")
-	public User getUserByUsername(@PathVariable("userName") String userName) {
-		return userService.getUserNamebyusername(userName);
+	public User getUserByUsername(@PathVariable("userName") String userName) 
+			throws UserNotFoundException{
+		//return userService.getUserNamebyusername(userName);
+		
+		User user = userService.getUserNamebyusername(userName);
+		
+		if (user == null) {
+			throw new UserNameNotFoundException(
+					"Username : '" + userName + "'");
+		}
+		return user;
 	}
 	
 	
