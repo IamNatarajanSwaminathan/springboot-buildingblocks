@@ -13,8 +13,11 @@ import javax.validation.constraints.Size;
 
 import org.springframework.hateoas.ResourceSupport;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+
 @Entity
 @Table(name="Users")
+@JsonFilter(value="userFilter")
 public class User extends ResourceSupport {
 
 	@Id
